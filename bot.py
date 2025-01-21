@@ -1,6 +1,21 @@
 import subprocess
 import sys
 import os
+# List of required libraries
+required_libraries = ['openai', 'python-telegram-bot']
+
+# Check for and install missing libraries
+for library in required_libraries:
+    try:
+        # Try to import the library
+        __import__(library)
+        print(f"{library} is already installed.")
+    except ImportError:
+        # If the library is not found, install it
+        print(f"{library} not found. Installing...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", library])
+
+print("All required libraries are installed.")
 import openai
 import base64
 from telegram import Update
