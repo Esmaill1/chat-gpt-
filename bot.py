@@ -1,19 +1,45 @@
 import subprocess
 import sys
 import os
+
+# Ensure Python3 and pip are installed (Ubuntu-specific instructions)
+def check_and_install_dependencies():
+    # Update package list
+    subprocess.check_call(['sudo', 'apt', 'update'])
+
+    # Install python3 and pip3 if not installed
+    try:
+        subprocess.check_call(['python3', '--version'])
+    except subprocess.CalledProcessError:
+        print("Python3 not found. Installing...")
+        subprocess.check_call(['sudo', 'apt', 'install', 'python3', '-y'])
+    
+    try:
+        subprocess.check_call(['pip3', '--version'])
+    except subprocess.CalledProcessError:
+        print("pip3 not found. Installing...")
+        subprocess.check_call(['sudo', 'apt', 'install', 'python3-pip', '-y'])
+
 # List of required libraries
 required_libraries = ['openai', 'python-telegram-bot']
 
-# Check for and install missing libraries
-for library in required_libraries:
-    try:
-        # Try to import the library
-        __import__(library)
-        print(f"{library} is already installed.")
-    except ImportError:
-        # If the library is not found, install it
-        print(f"{library} not found. Installing...")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", library])
+# Check and install missing libraries
+def install_libraries():
+    for library in required_libraries:
+        try:
+            # Try to import the library
+            __import__(library)
+            print(f"{library} is already installed.")
+        except ImportError:
+            # If the library is not found, install it
+            print(f"{library} not found. Installing...")
+            subprocess.check_call([sys.executable, "-m", "pip", "install", library])
+
+# Call function to ensure dependencies are installed
+check_and_install_dependencies()
+
+# Install libraries if missing
+install_libraries()
 
 print("All required libraries are installed.")
 import openai
@@ -22,25 +48,9 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes
 from telegram.ext.filters import PHOTO, TEXT
 
-# List of required libraries
-required_libraries = ['openai', 'python-telegram-bot']
-
-# Check for and install missing libraries
-for library in required_libraries:
-    try:
-        # Try to import the library
-        __import__(library)
-        print(f"{library} is already installed.")
-    except ImportError:
-        # If the library is not found, install it
-        print(f"{library} not found. Installing...")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", library])
-
-print("All required libraries are installed.")
-
-# Set up API keys
-OPENAI_API_KEY = "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"
-TELEGRAM_API_KEY = "7289833807:AAFOqKJCMDlr2aIdiGVv-L6AYmlLRsQEprQ"
+# Set up API keys (make sure to set your own API keys here)
+OPENAI_API_KEY = "your_openai_api_key_here"
+TELEGRAM_API_KEY = "your_telegram_bot_api_key_here"
 MODEL_NAME = "gpt-4o"
 ENDPOINT = "https://models.inference.ai.azure.com"
 
