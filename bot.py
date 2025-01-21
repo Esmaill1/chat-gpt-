@@ -49,8 +49,8 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, Con
 from telegram.ext.filters import PHOTO, TEXT
 
 # Set up API keys (make sure to set your own API keys here)
-OPENAI_API_KEY = "your_openai_api_key_here"
-TELEGRAM_API_KEY = "your_telegram_bot_api_key_here"
+OPENAI_API_KEY = "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"
+TELEGRAM_API_KEY = "7289833807:AAFOqKJCMDlr2aIdiGVv-L6AYmlLRsQEprQ"
 MODEL_NAME = "gpt-4o"
 ENDPOINT = "https://models.inference.ai.azure.com"
 
