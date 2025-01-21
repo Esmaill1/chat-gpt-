@@ -1,28 +1,4 @@
-import subprocess
-import sys
 import os
-
-# List of required libraries
-required_libraries = ['openai', 'python-telegram-bot']
-
-def install_with_pipx(library):
-    """Install the library using pipx if not already installed."""
-    try:
-        # Check if the library is installed using pipx by running a simple command
-        subprocess.check_call([sys.executable, "-m", "pipx", "run", library, "--help"])
-        print(f"{library} is already installed.")
-    except subprocess.CalledProcessError:
-        # If the library is not found, install it using pipx
-        print(f"{library} not found. Installing with pipx...")
-        subprocess.check_call([sys.executable, "-m", "pipx", "install", library])
-
-# Install required libraries automatically
-for library in required_libraries:
-    install_with_pipx(library)
-
-print("All required libraries are installed.")
-
-# Now, we can import the libraries
 import openai
 import base64
 from telegram import Update
@@ -30,14 +6,15 @@ from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, Con
 from telegram.ext.filters import PHOTO, TEXT
 
 # Set up API keys
-OPENAI_API_KEY = "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"  # Replace with your actual OpenAI API key
-TELEGRAM_API_KEY = "7289833807:AAFOqKJCMDlr2aIdiGVv-L6AYmlLRsQEprQ"  # Replace with your actual Telegram Bot API key
+OPENAI_API_KEY = "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"
+TELEGRAM_API_KEY = "7289833807:AAFOqKJCMDlr2aIdiGVv-L6AYmlLRsQEprQ"
 MODEL_NAME = "gpt-4o"
 ENDPOINT = "https://models.inference.ai.azure.com"
 
 # Configure OpenAI
 openai.api_key = OPENAI_API_KEY
 openai.api_base = ENDPOINT
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a welcome message when the user starts the bot."""
@@ -60,8 +37,10 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         # Query the OpenAI API for a response
         response = openai.ChatCompletion.create(
             model=MODEL_NAME,
-            messages=[{"role": "system", "content": "You are a helpful and friendly assistant."},
-                      {"role": "user", "content": user_message}],
+            messages=[
+                {"role": "system", "content": "You are a helpful and friendly assistant."},
+                {"role": "user", "content": user_message},
+            ],
         )
         reply = response['choices'][0]['message']['content']
         # Edit the "thinking" message with the actual reply
@@ -97,11 +76,13 @@ async def handle_image(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         # Query the OpenAI API
         response = openai.ChatCompletion.create(
             model=MODEL_NAME,
-            messages=[{"role": "system", "content": "You are a helpful assistant that describes images in detail."},
-                      {"role": "user", "content": [
-                          {"type": "text", "text": "What's in this image?"},
-                          {"type": "image_url", "image_url": {"url": image_url, "details": "low"}}
-                      ]}]
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that describes images in detail."},
+                {"role": "user", "content": [
+                    {"type": "text", "text": "What's in this image?"},
+                    {"type": "image_url", "image_url": {"url": image_url, "details": "low"}}
+                ]}
+            ]
         )
         description = response['choices'][0]['message']['content']
         # Edit the "thinking" message with the actual description
