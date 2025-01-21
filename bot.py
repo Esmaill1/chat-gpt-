@@ -1,54 +1,48 @@
 import subprocess
 import sys
 import os
-
-# Ensure Python3 and pip are installed (Ubuntu-specific instructions)
-def check_and_install_dependencies():
-    # Update package list
-    subprocess.check_call(['sudo', 'apt', 'update'])
-
-    # Install python3 and pip3 if not installed
-    try:
-        subprocess.check_call(['python3', '--version'])
-    except subprocess.CalledProcessError:
-        print("Python3 not found. Installing...")
-        subprocess.check_call(['sudo', 'apt', 'install', 'python3', '-y'])
-    
-    try:
-        subprocess.check_call(['pip3', '--version'])
-    except subprocess.CalledProcessError:
-        print("pip3 not found. Installing...")
-        subprocess.check_call(['sudo', 'apt', 'install', 'python3-pip', '-y'])
+import venv
+import pip
 
 # List of required libraries
 required_libraries = ['openai', 'python-telegram-bot']
 
-# Check and install missing libraries
+# Check for and install missing libraries in a virtual environment
 def install_libraries():
+    # Path to virtual environment
+    venv_path = 'venv'
+    
+    # Create the virtual environment if it does not exist
+    if not os.path.exists(venv_path):
+        print("Creating virtual environment...")
+        venv.create(venv_path, with_pip=True)
+
+    # Activate the virtual environment
+    activate_script = os.path.join(venv_path, 'bin', 'activate_this.py')
+    exec(open(activate_script).read(), {'__file__': activate_script})
+
+    # Install required libraries
     for library in required_libraries:
         try:
-            # Try to import the library
             __import__(library)
             print(f"{library} is already installed.")
         except ImportError:
-            # If the library is not found, install it
             print(f"{library} not found. Installing...")
             subprocess.check_call([sys.executable, "-m", "pip", "install", library])
 
-# Call function to ensure dependencies are installed
-check_and_install_dependencies()
+    print("All required libraries are installed.")
 
-# Install libraries if missing
+# Run the installation process
 install_libraries()
 
-print("All required libraries are installed.")
+# Now, you can import your libraries and continue with your bot
 import openai
 import base64
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes
 from telegram.ext.filters import PHOTO, TEXT
 
-# Set up API keys (make sure to set your own API keys here)
+# Set up API keys (keep these safe, consider using environment variables)
 OPENAI_API_KEY = "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"
 TELEGRAM_API_KEY = "7289833807:AAFOqKJCMDlr2aIdiGVv-L6AYmlLRsQEprQ"
 MODEL_NAME = "gpt-4o"
@@ -58,7 +52,6 @@ ENDPOINT = "https://models.inference.ai.azure.com"
 openai.api_key = OPENAI_API_KEY
 openai.api_base = ENDPOINT
 
-
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a welcome message when the user starts the bot."""
     await update.message.reply_text(
@@ -67,7 +60,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "🖼️ Send me an image, and I'll describe it for you.\n\n"
         "How can I help you today?"
     )
-
 
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle text messages for chat."""
@@ -89,7 +81,6 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     except Exception as e:
         # Edit the "thinking" message with an error message
         await thinking_message.edit_text(f"Sorry, I couldn't process your message. Error: {e}")
-
 
 async def handle_image(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle image messages."""
@@ -130,7 +121,6 @@ async def handle_image(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         # Edit the "thinking" message with an error message
         await thinking_message.edit_text(f"An error occurred while processing the image: {e}")
 
-
 def get_image_data_url(image_file: str, image_format: str) -> str:
     """
     Convert an image to a Base64 data URL.
@@ -145,7 +135,6 @@ def get_image_data_url(image_file: str, image_format: str) -> str:
     except FileNotFoundError:
         raise ValueError(f"Could not read '{image_file}'.")
 
-
 def main():
     """Start the bot."""
     application = ApplicationBuilder().token(TELEGRAM_API_KEY).build()
@@ -158,7 +147,6 @@ def main():
     # Start the bot
     print("Bot is running...")
     application.run_polling()
-
 
 if __name__ == "__main__":
     main()
