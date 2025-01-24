@@ -7,7 +7,7 @@ from telegram.ext.filters import PHOTO, TEXT
 
 # Set up API keys
 OPENAI_API_KEY = "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"
-TELEGRAM_API_KEY = "7289833807:AAFOqKJCMDlr2aIdiGVv-L6AYmlLRsQEprQ"
+TELEGRAM_API_KEY = "5177134620:AAGdqJatybqEikejXGqAuBYiu0pmnYRGt_Q"
 MODEL_NAME = "gpt-4o"
 ENDPOINT = "https://models.inference.ai.azure.com"
 
